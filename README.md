@@ -28,8 +28,8 @@ esbuild.build({
 		BugsnagSourceMapUploaderPlugin({
 			apiKey: 'YOUR_BUGSNAG_API_KEY',
 			appVersion: '1.0.0',
-			publicPath: 'https://example.com/static', // Optional publicPath
-			overwrite: true,
+			bundle: 'dist/index.js',
+			overwrite: true, // optional, default is true
 		}),
 	],
 });
