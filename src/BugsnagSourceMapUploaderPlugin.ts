@@ -31,6 +31,8 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 
 				// Get the output files from the build result
 				const outputFiles = result.metafile?.outputs;
+				console.log('result.metafile', result.metafile);
+				console.log('outputFiles', outputFiles);
 				if (!outputFiles) {
 					console.warn('[BugsnagSourceMapUploaderPlugin] No output files found. Skipping source map upload.');
 					return;
