@@ -3,7 +3,7 @@
 To install dependencies:
 
 ```bash
-bun install
+bun add esbuild-bugsnag-plugins
 ```
 
 ## Usage

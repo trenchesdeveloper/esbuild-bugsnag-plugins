@@ -28,21 +28,21 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 					throw new Error('[BugsnagSourceMapUploaderPlugin] Error: Missing required configuration. "appVersion" is required.');
 				}
 
-				// Warn if publicPath is not provided
+				// Warn if bundle is not provided
 				if (options.bundle === '') {
 					console.warn(
 						'[BugsnagSourceMapUploaderPlugin] `bundle` is not set.\n\n' +
 							'  Source maps must be uploaded with the pattern that matches the file path in stacktraces.\n\n' +
-							'  To make this message go away, set "publicPath" in the plugin options.\n\n' +
+							'  To make this message go away, set "bundle" in the plugin options.\n\n' +
 							'  In some cases, such as in a Node environment, it is safe to ignore this message.\n',
 					);
 				}
 
-				// Check if metafile is available (only needed if publicPath is empty)
+				// Check if metafile is available (only needed if bundle is empty)
 				if (options.bundle === '' && !result.metafile) {
 					throw new Error(
 						'[BugsnagSourceMapUploaderPlugin] Error: `metafile` is not enabled in the esbuild configuration.\n\n' +
-						'  Please add `metafile: true` to your esbuild build options to enable source map uploads when `publicPath` is not provided.\n',
+						'  Please add `metafile: true` to your esbuild build options to enable source map uploads when `bundle` is not provided.\n',
 					);
 				}
 
@@ -57,13 +57,12 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for source map at ${sourceMapPath}...`);
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${bundlePath}...`);
-					const updatedBundlePath = bundlePath.replace(/\/$/, '');
 
 					if (fs.existsSync(sourceMapPath)) {
-						// Use the provided publicPath if it's not empty
+						// Use the provided bundle if it's not empty
 						const bundleUrl = options.bundle !== ''
 							? options.bundle
-							: updatedBundlePath;
+							: bundlePath; // Fall back to the bundlePath if bundle is empty
 
 						console.log(`[BugsnagSourceMapUploaderPlugin] Uploading source map for ${bundlePath} to Bugsnag...`);
 
