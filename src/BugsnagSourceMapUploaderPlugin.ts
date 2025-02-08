@@ -13,6 +13,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 		name: 'bugsnag-sourcemap-uploader',
 		setup(build) {
 			build.onEnd(async (result) => {
+				console.log('Build result', result);
 				if (result.errors.length > 0) {
 					console.error('[BugsnagSourceMapUploaderPlugin] Build failed. Skipping source map upload.');
 					return;
