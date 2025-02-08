@@ -2,6 +2,8 @@
   "name": "esbuild-bugsnag-plugins",
   "module": "index.ts",
   "type": "module",
+  "version": "1.2.2",
+  "description": "esbuild plugin for bugsnag source maps",
   "scripts": {
 "build": "esbuild src/index.ts --outdir=dist --bundle --minify --sourcemap --platform=node --external:axios --external:form-data --external:@bugsnag/source-maps",
     "test": "echo \"Error: no test specified\" && exit 1"
