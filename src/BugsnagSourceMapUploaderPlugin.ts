@@ -20,6 +20,14 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 
 				console.log('[BugsnagSourceMapUploaderPlugin] Build finished. Uploading source maps to Bugsnag...');
 
+				// Validate required options and throw an error if missing.
+				if (!options.apiKey || typeof options.apiKey !== 'string') {
+					throw new Error('[BugsnagSourceMapUploaderPlugin] Error: Missing required configuration. "apiKey" is required.');
+				}
+				if (!options.appVersion) {
+					throw new Error('[BugsnagSourceMapUploaderPlugin] Error: Missing required configuration. "appVersion" is required.');
+				}
+
 				// Get the output files from the build result
 				const outputFiles = result.metafile?.outputs;
 				if (!outputFiles) {
@@ -55,6 +63,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 								? `${options.publicPath.replace(/\/$/, '')}/${path.basename(bundlePath)}`
 								: bundlePath;
                             console.log(`[BugsnagSourceMapUploaderPlugin] Uploading source map for ${bundlePath} to Bugsnag...`);
+							try {
 
 							await bugsnagNodeUploader.uploadOne({
 								apiKey: options.apiKey,
@@ -63,7 +72,9 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 								appVersion: options.appVersion,
 								overwrite: options.overwrite || true,
 							});
+						} catch (error) {
 							console.log(`[BugsnagSourceMapUploaderPlugin] Uploaded source map for ${bundlePath} to Bugsnag.`);
+						}
 
 					} else {
 						console.warn(`[BugsnagSourceMapUploaderPlugin] Source map not found for ${bundlePath}. Skipping upload.`);
