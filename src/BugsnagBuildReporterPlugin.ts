@@ -33,12 +33,8 @@ export function BugsnagBuildReporterPlugin(options: {
 						: undefined,
 				};
 
-				try {
 					const response = await axios.post('https://build.bugsnag.com/', payload);
 					console.log('[BugsnagBuildReporterPlugin] Build reported successfully:', response.data);
-				} catch (error) {
-					console.error('[BugsnagBuildReporterPlugin] Error reporting build:', error);
-				}
 			});
 		},
 	};

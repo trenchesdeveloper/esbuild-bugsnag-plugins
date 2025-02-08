@@ -49,7 +49,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
                     console.log(`[BugsnagSourceMapUploaderPlugin] Checking for source map at ${sourceMapPath}...`);
 
 					if (fs.existsSync(sourceMapPath)) {
-						try {
+
 							// Construct the URL using publicPath or fall back to bundlePath
 							const bundleUrl = options.publicPath
 								? `${options.publicPath.replace(/\/$/, '')}/${path.basename(bundlePath)}`
@@ -64,9 +64,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 								overwrite: options.overwrite || true,
 							});
 							console.log(`[BugsnagSourceMapUploaderPlugin] Uploaded source map for ${bundlePath} to Bugsnag.`);
-						} catch (error) {
-							console.error(`[BugsnagSourceMapUploaderPlugin] Error uploading source map for ${bundlePath}:`, error);
-						}
+
 					} else {
 						console.warn(`[BugsnagSourceMapUploaderPlugin] Source map not found for ${bundlePath}. Skipping upload.`);
 					}
