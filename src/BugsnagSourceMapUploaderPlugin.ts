@@ -1,6 +1,7 @@
 import { node as bugsnagNodeUploader } from '@bugsnag/source-maps';
 import type { Plugin } from 'esbuild';
 import fs from 'fs';
+import path from 'path';
 
 export function BugsnagSourceMapUploaderPlugin(options: {
 	apiKey: string;
@@ -28,7 +29,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 					throw new Error('[BugsnagSourceMapUploaderPlugin] Error: Missing required configuration. "appVersion" is required.');
 				}
 
-				// Warn if bundle is not provided
+				// Warn if publicPath is not provided
 				if (options.bundle === '') {
 					console.warn(
 						'[BugsnagSourceMapUploaderPlugin] `bundle` is not set.\n\n' +
@@ -42,7 +43,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 				if (options.bundle === '' && !result.metafile) {
 					throw new Error(
 						'[BugsnagSourceMapUploaderPlugin] Error: `metafile` is not enabled in the esbuild configuration.\n\n' +
-						'  Please add `metafile: true` to your esbuild build options to enable source map uploads when `bundle` is not provided.\n',
+						'  Please add `metafile: true` to your esbuild build options to enable source map uploads when `publicPath` is not provided.\n',
 					);
 				}
 
@@ -57,14 +58,14 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for source map at ${sourceMapPath}...`);
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${bundlePath}...`);
-
 					const updatedBundlePath = bundlePath.replace(/\/$/, '');
 
+					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${updatedBundlePath}...`);
 					if (fs.existsSync(sourceMapPath)) {
-						// Use the provided bundle if it's not empty
+						// Use the provided publicPath if it's not empty
 						const bundleUrl = options.bundle !== ''
 							? options.bundle
-							: updatedBundlePath; // Fall back to the bundlePath if bundle is empty
+							: updatedBundlePath;
 
 						console.log(`[BugsnagSourceMapUploaderPlugin] Uploading source map for ${bundlePath} to Bugsnag...`);
 
@@ -74,7 +75,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 								bundle: bundleUrl, // Use the constructed URL as the bundle
 								sourceMap: sourceMapPath,
 								appVersion: options.appVersion,
-								overwrite: options.overwrite || true, // Default to false if not provided
+								overwrite: options.overwrite || false, // Default to false if not provided
 							});
 							console.log(`[BugsnagSourceMapUploaderPlugin] Uploaded source map for ${bundlePath} to Bugsnag.`);
 						} catch (error) {

@@ -3,7 +3,7 @@
 To install dependencies:
 
 ```bash
-bun add esbuild-bugsnag-plugins
+bun install
 ```
 
 ## Usage
@@ -28,8 +28,8 @@ esbuild.build({
 		BugsnagSourceMapUploaderPlugin({
 			apiKey: 'YOUR_BUGSNAG_API_KEY',
 			appVersion: '1.0.0',
-			bundle: 'dist/index.js',
-			overwrite: true, // optional, default is true
+			publicPath: 'https://example.com/static', // Optional publicPath
+			overwrite: true,
 		}),
 	],
 });
