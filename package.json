@@ -1,10 +1,10 @@
 {
   "name": "esbuild-bugsnag-plugins",
   "types": "./src/index.d.ts",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "esbuild plugin for bugsnag source maps",
   "scripts": {
-    "build": "bun build src/index.ts --outdir dist",
+    "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --sourcemap",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
