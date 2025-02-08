@@ -1,0 +1,38 @@
+name: Publish Package to npm
+
+on:
+  push:
+    # Trigger the workflow only when a tag starting with "v" is pushed.
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          # Add Bun to the PATH for the rest of the workflow.
+          echo "::add-path::${HOME}/.bun/bin"
+
+      - name: Install dependencies with Bun
+        run: bun install
+
+      - name: Build package
+        run: bun run build
+
+      - name: Publish package to npm
+        run: bun publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

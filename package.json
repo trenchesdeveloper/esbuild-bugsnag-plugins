@@ -1,0 +1,30 @@
+{
+  "name": "esbuild-bugsnag-plugins",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+"build": "esbuild src/index.ts --outdir=dist --bundle --minify --sourcemap --platform=node --external:axios --external:form-data --external:@bugsnag/source-maps",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "esbuild",
+    "bugsnag",
+    "plugin",
+    "sourcemap",
+    "build"
+  ],
+  "author": "trenchesdeveloper",
+  "license": "MIT",
+  "dependencies": {
+    "@bugsnag/source-maps": "^2.3.3",
+    "axios": "^1.7.9",
+    "esbuild": "^0.25.0",
+    "form-data": "^4.0.1"
+  }
+}
