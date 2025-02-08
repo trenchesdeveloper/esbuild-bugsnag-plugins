@@ -6,7 +6,7 @@ import path from 'path';
 export function BugsnagSourceMapUploaderPlugin(options: {
 	apiKey: string;
 	appVersion: string;
-	publicPath?: string; // Optional publicPath
+	publicPath: string; // publicPath
 	overwrite?: boolean;
 }): Plugin {
 	return {
@@ -29,17 +29,8 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 					throw new Error('[BugsnagSourceMapUploaderPlugin] Error: Missing required configuration. "appVersion" is required.');
 				}
 
-				// Get the output files from the build result
-				const outputFiles = result.metafile?.outputs;
-				console.log('result.metafile', result.metafile);
-				console.log('outputFiles', outputFiles);
-				if (!outputFiles) {
-					console.warn('[BugsnagSourceMapUploaderPlugin] No output files found. Skipping source map upload.');
-					return;
-				}
-
 				// Warn if publicPath is not provided
-				if (!options.publicPath) {
+				if (options.publicPath === '') {
 					console.warn(
 						'[BugsnagSourceMapUploaderPlugin] `publicPath` is not set.\n\n' +
 							'  Source maps must be uploaded with the pattern that matches the file path in stacktraces.\n\n' +
@@ -48,8 +39,16 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 					);
 				}
 
-				// Iterate over the output files and upload source maps
-				for (const [bundlePath] of Object.entries(outputFiles)) {
+				// Check if metafile is available (only needed if publicPath is empty)
+				if (options.publicPath === '' && !result.metafile) {
+					throw new Error(
+						'[BugsnagSourceMapUploaderPlugin] Error: `metafile` is not enabled in the esbuild configuration.\n\n' +
+						'  Please add `metafile: true` to your esbuild build options to enable source map uploads when `publicPath` is not provided.\n',
+					);
+				}
+
+				// Iterate over the output files to find JavaScript bundles and their source maps
+				for (const [bundlePath, output] of Object.entries(result.metafile?.outputs || {})) {
 					// Skip non-JavaScript files (e.g., CSS)
 					if (!bundlePath.endsWith('.js')) {
 						continue;
@@ -57,28 +56,30 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 
 					const sourceMapPath = `${bundlePath}.map`;
 
-                    console.log(`[BugsnagSourceMapUploaderPlugin] Checking for source map at ${sourceMapPath}...`);
-
+					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for source map at ${sourceMapPath}...`);
+					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${bundlePath}...`);
+					// log ${options.publicPath.replace(/\/$/, '')}/${path.basename(bundlePath)}
+					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${options.publicPath.replace(/\/$/, '')}/${path.basename(bundlePath)}`);
 					if (fs.existsSync(sourceMapPath)) {
+						// Use the provided publicPath if it's not empty
+						const bundleUrl = options.publicPath !== ''
+							? options.publicPath
+							: `${options.publicPath.replace(/\/$/, '')}/${path.basename(bundlePath)}`;
 
-							// Construct the URL using publicPath or fall back to bundlePath
-							const bundleUrl = options.publicPath
-								? `${options.publicPath.replace(/\/$/, '')}/${path.basename(bundlePath)}`
-								: bundlePath;
-                            console.log(`[BugsnagSourceMapUploaderPlugin] Uploading source map for ${bundlePath} to Bugsnag...`);
-							try {
+						console.log(`[BugsnagSourceMapUploaderPlugin] Uploading source map for ${bundlePath} to Bugsnag...`);
 
+						try {
 							await bugsnagNodeUploader.uploadOne({
 								apiKey: options.apiKey,
 								bundle: bundleUrl, // Use the constructed URL as the bundle
 								sourceMap: sourceMapPath,
 								appVersion: options.appVersion,
-								overwrite: options.overwrite || true,
+								overwrite: options.overwrite || false, // Default to false if not provided
 							});
-						} catch (error) {
 							console.log(`[BugsnagSourceMapUploaderPlugin] Uploaded source map for ${bundlePath} to Bugsnag.`);
+						} catch (error) {
+							console.error(`[BugsnagSourceMapUploaderPlugin] Failed to upload source map for ${bundlePath}:`, error);
 						}
-
 					} else {
 						console.warn(`[BugsnagSourceMapUploaderPlugin] Source map not found for ${bundlePath}. Skipping upload.`);
 					}
