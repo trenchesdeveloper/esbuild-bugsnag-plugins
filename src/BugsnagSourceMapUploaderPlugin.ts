@@ -5,7 +5,7 @@ import fs from 'fs';
 export function BugsnagSourceMapUploaderPlugin(options: {
 	apiKey: string;
 	appVersion: string;
-	publicPath: string; // publicPath
+	bundle: string; // publicPath
 	overwrite?: boolean;
 }): Plugin {
 	return {
@@ -29,9 +29,9 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 				}
 
 				// Warn if publicPath is not provided
-				if (options.publicPath === '') {
+				if (options.bundle === '') {
 					console.warn(
-						'[BugsnagSourceMapUploaderPlugin] `publicPath` is not set.\n\n' +
+						'[BugsnagSourceMapUploaderPlugin] `bundle` is not set.\n\n' +
 							'  Source maps must be uploaded with the pattern that matches the file path in stacktraces.\n\n' +
 							'  To make this message go away, set "publicPath" in the plugin options.\n\n' +
 							'  In some cases, such as in a Node environment, it is safe to ignore this message.\n',
@@ -39,7 +39,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 				}
 
 				// Check if metafile is available (only needed if publicPath is empty)
-				if (options.publicPath === '' && !result.metafile) {
+				if (options.bundle === '' && !result.metafile) {
 					throw new Error(
 						'[BugsnagSourceMapUploaderPlugin] Error: `metafile` is not enabled in the esbuild configuration.\n\n' +
 						'  Please add `metafile: true` to your esbuild build options to enable source map uploads when `publicPath` is not provided.\n',
@@ -61,8 +61,8 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 
 					if (fs.existsSync(sourceMapPath)) {
 						// Use the provided publicPath if it's not empty
-						const bundleUrl = options.publicPath !== ''
-							? options.publicPath
+						const bundleUrl = options.bundle !== ''
+							? options.bundle
 							: updatedBundlePath;
 
 						console.log(`[BugsnagSourceMapUploaderPlugin] Uploading source map for ${bundlePath} to Bugsnag...`);
