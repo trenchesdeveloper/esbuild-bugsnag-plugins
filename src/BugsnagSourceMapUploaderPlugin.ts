@@ -58,13 +58,14 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for source map at ${sourceMapPath}...`);
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${bundlePath}...`);
-					// log ${options.publicPath.replace(/\/$/, '')}/${path.basename(bundlePath)}
-					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${options.publicPath.replace(/\/$/, '')}/${path.basename(bundlePath)}`);
+					const updatedBundlePath = bundlePath.replace(/\/$/, '');
+
+					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${updatedBundlePath}...`);
 					if (fs.existsSync(sourceMapPath)) {
 						// Use the provided publicPath if it's not empty
 						const bundleUrl = options.publicPath !== ''
 							? options.publicPath
-							: `${options.publicPath.replace(/\/$/, '')}/${path.basename(bundlePath)}`;
+							: updatedBundlePath;
 
 						console.log(`[BugsnagSourceMapUploaderPlugin] Uploading source map for ${bundlePath} to Bugsnag...`);
 
