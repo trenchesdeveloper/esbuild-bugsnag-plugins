@@ -1,7 +1,6 @@
 import { node as bugsnagNodeUploader } from '@bugsnag/source-maps';
 import type { Plugin } from 'esbuild';
 import fs from 'fs';
-import path from 'path';
 
 export function BugsnagSourceMapUploaderPlugin(options: {
 	apiKey: string;
@@ -58,7 +57,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for source map at ${sourceMapPath}...`);
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${bundlePath}...`);
-					const updatedBundlePath = bundlePath.replace(/\/$/, '');
+					const updatedBundlePath = bundlePath.substring(0, bundlePath.lastIndexOf('/'));
 
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${updatedBundlePath}...`);
 					if (fs.existsSync(sourceMapPath)) {
