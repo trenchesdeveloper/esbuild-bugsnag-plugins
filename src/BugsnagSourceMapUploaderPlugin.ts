@@ -58,11 +58,13 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for source map at ${sourceMapPath}...`);
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${bundlePath}...`);
 
+					const updatedBundlePath = bundlePath.replace(/\/$/, '');
+
 					if (fs.existsSync(sourceMapPath)) {
 						// Use the provided bundle if it's not empty
 						const bundleUrl = options.bundle !== ''
 							? options.bundle
-							: bundlePath; // Fall back to the bundlePath if bundle is empty
+							: updatedBundlePath; // Fall back to the bundlePath if bundle is empty
 
 						console.log(`[BugsnagSourceMapUploaderPlugin] Uploading source map for ${bundlePath} to Bugsnag...`);
 
@@ -72,7 +74,7 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 								bundle: bundleUrl, // Use the constructed URL as the bundle
 								sourceMap: sourceMapPath,
 								appVersion: options.appVersion,
-								overwrite: options.overwrite || false, // Default to false if not provided
+								overwrite: options.overwrite || true, // Default to false if not provided
 							});
 							console.log(`[BugsnagSourceMapUploaderPlugin] Uploaded source map for ${bundlePath} to Bugsnag.`);
 						} catch (error) {
