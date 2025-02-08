@@ -57,9 +57,8 @@ export function BugsnagSourceMapUploaderPlugin(options: {
 
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for source map at ${sourceMapPath}...`);
 					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${bundlePath}...`);
-					const updatedBundlePath = bundlePath.substring(0, bundlePath.lastIndexOf('/'));
+					const updatedBundlePath = bundlePath.replace(/\/$/, '');
 
-					console.log(`[BugsnagSourceMapUploaderPlugin] Checking for bundle at ${updatedBundlePath}...`);
 					if (fs.existsSync(sourceMapPath)) {
 						// Use the provided publicPath if it's not empty
 						const bundleUrl = options.publicPath !== ''
