@@ -1,5 +1,12 @@
 # esbuild-bugsnag-plugins
 
+## 1.3.0
+
+Supersedes a stray legacy `1.2.2` (published 2025-02-08 with the old, untyped
+build) so that semver ranges such as `^1.x` resolve to the maintained build
+instead of the broken older version. This is a version-only release — the code
+is identical to `1.1.0`.
+
 ## 1.1.0
 
 ### Minor Changes
