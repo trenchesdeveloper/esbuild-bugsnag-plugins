@@ -1,5 +1,12 @@
 # esbuild-bugsnag-plugins
 
+## 1.3.1
+
+CI/release only — no package code changes (published tarball is identical to
+`1.3.0`). Switches publishing to npm Trusted Publishing (OIDC): the workflow
+authenticates via the GitHub Actions OIDC token instead of `NPM_TOKEN`, and
+provenance is generated automatically.
+
 ## 1.3.0
 
 Supersedes a stray legacy `1.2.2` (published 2025-02-08 with the old, untyped
